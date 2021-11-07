@@ -21,7 +21,7 @@ print(shots_data[0]["shot"]["freeze_frame"])
 # %%
 import random
 
-shots = [0,1,2,3]
+shots = [1]
 
 shots = filter(lambda x: "freeze_frame" in shots_data[x]["shot"].keys(), shots)
 
@@ -39,7 +39,7 @@ for shot_num in shots:
     points = np.array(points)
     x, y = points.T
     plt.ylim(0, 80)
-    plt.xlim(0, 120)
+    plt.xlim(60, 120)
     plt.scatter(x,y, s = 10, color = 'black')
 
     plt.scatter(ball_loc[0], ball_loc[1], marker='x')
