@@ -4,6 +4,10 @@ import json
 from math import atan2
 
 data = json.load(open('shots.json', 'r'))
+key_pass_data = json.load(open('key_passes.json', 'r'))
+key_pass_array = []
+for key_pass in key_pass_data:
+    key_pass_array.append(key_pass['id'])
 
 num_shots = len(data)
 CENTRE_OF_GOAL = (120, 40)
@@ -43,6 +47,9 @@ shot_technique = []
 shot_body_part = []
 goalkeeper_in_the_way = []
 one_on_one = []
+pass_length = []
+pass_angle = []
+pass_speed = []
 
 goal = []
 
@@ -122,10 +129,25 @@ for shot in data:
     play_pattern.append(shot['shot']['type']['name'])
     duration.append(shot['duration'])
 
+    if 'key_pass_id' in shot['shot'] and shot['shot']['key_pass_id'] in key_pass_array:
+        key_pass = key_pass_data[key_pass_array.index(shot['shot']['key_pass_id'])]
+        pass_length.append(key_pass['pass']['length'])
+        pass_angle.append(key_pass['pass']['angle'])
+        start_pos = key_pass['location']
+        end_pos = key_pass['pass']['end_location']
+        pass_duration = key_pass['duration']
+        speed = (((end_pos[0] - start_pos[0])**2 + (end_pos[1] - start_pos[1])**2)**0.5) / pass_duration
+        pass_speed.append(speed)
+    else:
+        pass_length.append(-1)
+        pass_angle.append(-1)
+        pass_speed.append(-1)
+
     if shot['shot']['outcome']['name'] == "Goal":
         goal.append(1)
     else:
         goal.append(0)
+    
 
 
 df = pd.DataFrame({
@@ -144,18 +166,12 @@ df = pd.DataFrame({
     'shot_body_part': shot_body_part,
     'goalkeeper_in_the_way': goalkeeper_in_the_way,
     'one_on_one': one_on_one,
+    'pass_length': pass_length,
+    'pass_angle': pass_angle,
+    'pass_speed': pass_speed,
     'goal': goal,
 })
 
 df.to_csv('shots.csv', index=True, header=True, index_label='shot_num')
-
-key_pass_ids = []
-for shot in data:
-    if 'key_pass_id' in shot['shot']:
-        key_pass_ids.append(shot['shot']['key_pass_id'])
-related_df = pd.DataFrame({
-    'key_pass_ids': key_pass_ids,
-})
-related_df.to_csv('key_pass_ids.csv', index=True, header=True, index_label='related_event_num')
 
 print(df.describe(include='all'))
