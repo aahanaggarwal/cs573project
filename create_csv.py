@@ -35,6 +35,7 @@ def player_between_goal(shot_location, player_location):
 play_pattern = []
 duration = []
 distance_to_goal = []
+shot_speed = []
 angle_to_goal = []
 players_between_goal = []
 players_within_1 = []
@@ -84,6 +85,10 @@ for shot in data:
     shot_location = shot['location']
     curr_dist = ((shot_location[0] - CENTRE_OF_GOAL[0])**2 + (shot_location[1] - CENTRE_OF_GOAL[1])**2)**0.5
     distance_to_goal.append(curr_dist)
+    if shot['duration'] != 0:
+        shot_speed.append(curr_dist / shot['duration'] )
+    else:
+        shot_speed.append(-1)
 
     angle1 = atan2(LEFT_OF_GOAL[1] - shot_location[1], LEFT_OF_GOAL[0] - shot_location[0])
     angle2 = atan2(RIGHT_OF_GOAL[1] - shot_location[1], RIGHT_OF_GOAL[0] - shot_location[0])
@@ -151,9 +156,10 @@ for shot in data:
 
 
 df = pd.DataFrame({
-    'distant_to_goal': distance_to_goal,
+    'distance_to_goal': distance_to_goal,
     'play_pattern': play_pattern,
     'duration': duration,
+    'shot_speed': shot_speed,
     'angle_to_goal': angle_to_goal,
     'players_between_goal': players_between_goal,
     'players_within_1': players_within_1,
