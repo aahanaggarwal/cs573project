@@ -6,21 +6,22 @@ import numpy as np
 import json
 import matplotlib.pyplot as plt
 
-locations = []
 x, y = [], []
+end_x, end_y = [], []
 
 data = json.load(open('shots.json', 'r'))
 
 for shot in data:
-    locations.append(shot['location'])
+    if shot['shot']['outcome']['id'] != 97: continue
     x.append(shot['location'][0])
     y.append(shot['location'][1])
+    end_x.append(shot['shot']['end_location'][0])
+    end_y.append(shot['shot']['end_location'][1])
 
-locations = np.array(locations)
 x = np.array(x)
 y = np.array(y)
-print(locations, x, y)
-
+end_x = np.array(end_x)
+end_y = np.array(end_y)
 
 #%%
 
@@ -95,21 +96,21 @@ plt.plot([pass_x, shot_x], [pass_y, shot_y])
 import datashader as ds, colorcet
 
 # add some noise to x and y
-x_noisy = x + np.random.normal(0, 0.25, len(x))
-y_noisy = y + np.random.normal(0, 0.25, len(y))
+# x_noisy = x + np.random.normal(0, 0.25, len(x))
+# y_noisy = y + np.random.normal(0, 0.25, len(y))
 
 
-x_clipped = x_noisy.clip(60, 120)
+# x_clipped = x_noisy.clip(60, 120)
 
-df = pd.DataFrame({'x': x_clipped, 'y': y_noisy})
+# df = pd.DataFrame({'x': x_clipped, 'y': y_noisy})
 
-cvs = ds.Canvas(plot_width=800, plot_height=600)
-agg = cvs.points(df, 'x', 'y')
-img = ds.tf.shade(agg, how='cbrt', cmap=colorcet.fire)
-img = ds.tf.set_background(img, 'black')
-pil_img = img.to_pil()
-pil_img.save('media/heatmap_of_shot_locations_ds.png')
-pil_img.show()
+# cvs = ds.Canvas(plot_width=800, plot_height=600)
+# agg = cvs.points(df, 'x', 'y')
+# img = ds.tf.shade(agg, how='cbrt', cmap=colorcet.fire)
+# img = ds.tf.set_background(img, 'black')
+# pil_img = img.to_pil()
+# pil_img.save('media/heatmap_of_shot_locations_ds.png')
+# pil_img.show()
 
 
 # %%
@@ -118,48 +119,68 @@ def getEquidistantPoints(p1, p2, parts):
     return list(zip(np.linspace(p1[0], p2[0], parts+1),
                np.linspace(p1[1], p2[1], parts+1)))
 
-all_points = []
-print(len(pass_x))
-for i in range(0, len(pass_x)):
-    all_points.extend(list(getEquidistantPoints((pass_x[i], pass_y[i]), (shot_x[i], shot_y[i]), 500)))
+# all_points = []
+# print(len(pass_x))
+# for i in range(0, len(pass_x)):
+#     all_points.extend(list(getEquidistantPoints((pass_x[i], pass_y[i]), (shot_x[i], shot_y[i]), 500)))
 
-all_goal_points = []
-for i in range(0, len(goal_pass_x)):
-    all_goal_points.extend(list(getEquidistantPoints((goal_pass_x[i], goal_pass_y[i]), (goal_shot_x[i], goal_shot_y[i]), 500)))
+# all_goal_points = []
+# for i in range(0, len(goal_pass_x)):
+#     all_goal_points.extend(list(getEquidistantPoints((goal_pass_x[i], goal_pass_y[i]), (goal_shot_x[i], goal_shot_y[i]), 500)))
 
-print(len(all_goal_points))
+# print(len(all_goal_points))
 
-print(len(all_points))
-all_points = np.array(all_points)
-print(all_points)
+# print(len(all_points))
+# all_points = np.array(all_points)
+# print(all_points)
+
+goal_line_points = []
+for i in range(0, len(x)):
+    goal_line_points.extend(list(getEquidistantPoints((x[i], y[i]), (end_x[i], end_y[i]), 500)))
+
+goal_line_points = np.array(goal_line_points)
+print(goal_line_points)
 
 # %%
 
-all_x = all_points[:, 0]
-all_y = all_points[:, 1]
-print(all_x)
+# all_x = all_points[:, 0]
+# all_y = all_points[:, 1]
+# print(all_x)
 
-all_goal_points = np.array(all_goal_points)
-all_goal_x = all_goal_points[:, 0]
-all_goal_y = all_goal_points[:, 1]
+# all_goal_points = np.array(all_goal_points)
+# all_goal_x = all_goal_points[:, 0]
+# all_goal_y = all_goal_points[:, 1]
 
-df = pd.DataFrame({'x': all_x, 'y': all_y})
+goal_line_x = goal_line_points[:, 0]
+goal_line_y = goal_line_points[:, 1]
+
+# df = pd.DataFrame({'x': all_x, 'y': all_y})
+
+# cvs = ds.Canvas(plot_width=800, plot_height=600)
+# agg = cvs.points(df, 'x', 'y')
+# img = ds.tf.shade(agg, how='log', cmap=colorcet.fire)
+# img = ds.tf.set_background(img, 'black')
+# pil_img = img.to_pil()
+# pil_img.save('media/heatmap_of_key_passes.png')
+# pil_img.show()
+
+# df = pd.DataFrame({'x': all_goal_x, 'y': all_goal_y})
+
+# cvs = ds.Canvas(plot_width=800, plot_height=600)
+# agg = cvs.points(df, 'x', 'y')
+# img = ds.tf.shade(agg, how='log', cmap=colorcet.fire)
+# img = ds.tf.set_background(img, 'black')
+# pil_img = img.to_pil()
+# pil_img.save('media/heatmap_of_key_passes_with_goal.png')
+# pil_img.show()
+
+df = pd.DataFrame({'x': goal_line_x, 'y': goal_line_y})
 
 cvs = ds.Canvas(plot_width=800, plot_height=600)
 agg = cvs.points(df, 'x', 'y')
 img = ds.tf.shade(agg, how='log', cmap=colorcet.fire)
 img = ds.tf.set_background(img, 'black')
 pil_img = img.to_pil()
-pil_img.save('media/heatmap_of_key_passes.png')
-pil_img.show()
-
-df = pd.DataFrame({'x': all_goal_x, 'y': all_goal_y})
-
-cvs = ds.Canvas(plot_width=800, plot_height=600)
-agg = cvs.points(df, 'x', 'y')
-img = ds.tf.shade(agg, how='log', cmap=colorcet.fire)
-img = ds.tf.set_background(img, 'black')
-pil_img = img.to_pil()
-pil_img.save('media/heatmap_of_key_passes_with_goal.png')
+pil_img.save('media/heatmap_goals.png')
 pil_img.show()
 # %%
