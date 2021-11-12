@@ -87,26 +87,15 @@ x_clipped = x_noisy.clip(60, 120)
 
 df = pd.DataFrame({'x': x_clipped, 'y': y_noisy})
 
-cvs = ds.Canvas(plot_width=400, plot_height=300)
+cvs = ds.Canvas(plot_width=800, plot_height=600)
 agg = cvs.points(df, 'x', 'y')
 img = ds.tf.shade(agg, how='cbrt', cmap=colorcet.fire)
 img = ds.tf.set_background(img, 'black')
 pil_img = img.to_pil()
 pil_img.save('media/heatmap_of_shot_locations_ds.png')
 pil_img.show()
-# Dont really wanna save this
-
-#%%
-
-df = pd.DataFrame({'pass_x': pass_x, 'pass_y': pass_y, 'shot_x': shot_x, 'shot_y': shot_y})
-cvs = ds.Canvas(plot_width=400, plot_height=300)
-agg = cvs.line(df, x='pass_x', y='pass_y')
-img = ds.tf.shade(agg, how='cbrt', cmap=colorcet.fire)
-img = ds.tf.set_background(img, 'black')
 
 
-# agg = cvs.line(df, x=['A1', 'A2'], y=['B1', 'B2'], axis=0) # doctest: +SKIP
-# ... tf.spread(tf.shade(agg))
 # %%
 
 def getEquidistantPoints(p1, p2, parts):
@@ -130,7 +119,7 @@ print(all_x)
 
 df = pd.DataFrame({'x': all_x, 'y': all_y})
 
-cvs = ds.Canvas(plot_width=400, plot_height=300)
+cvs = ds.Canvas(plot_width=800, plot_height=600)
 agg = cvs.points(df, 'x', 'y')
 img = ds.tf.shade(agg, how='log', cmap=colorcet.fire)
 img = ds.tf.set_background(img, 'black')
