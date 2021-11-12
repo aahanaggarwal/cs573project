@@ -53,13 +53,24 @@ shot_x = []
 shot_y = []
 pass_x = []
 pass_y = []
+
+goal_shot_x = []
+goal_shot_y = []
+goal_pass_x = []
+goal_pass_y = []
 for shot in data:
+    
     if 'key_pass_id' in shot['shot'] and shot['shot']['key_pass_id'] in key_pass_array:
         shot_x.append(shot['location'][0])
         shot_y.append(shot['location'][1])
         key_pass = key_pass_data[key_pass_array.index(shot['shot']['key_pass_id'])]
         pass_x.append(key_pass['location'][0])
         pass_y.append(key_pass['location'][1])
+        if shot['shot']['outcome']['id'] == 97:
+            goal_shot_x.append(shot['location'][0])
+            goal_shot_y.append(shot['location'][1])
+            goal_pass_x.append(key_pass['location'][0])
+            goal_pass_y.append(key_pass['location'][1])
 # %%
 print(shot_x[0], shot_y[0], pass_x[0], pass_y[0])
 
@@ -67,6 +78,11 @@ shot_x = np.array(shot_x)
 shot_y = np.array(shot_y)
 pass_x = np.array(pass_x)
 pass_y = np.array(pass_y)
+
+goal_shot_x = np.array(goal_shot_x)
+goal_shot_y = np.array(goal_shot_y)
+goal_pass_x = np.array(goal_pass_x)
+goal_pass_y = np.array(goal_pass_y)
 
 plt.clf()
 
@@ -107,6 +123,12 @@ print(len(pass_x))
 for i in range(0, len(pass_x)):
     all_points.extend(list(getEquidistantPoints((pass_x[i], pass_y[i]), (shot_x[i], shot_y[i]), 500)))
 
+all_goal_points = []
+for i in range(0, len(goal_pass_x)):
+    all_goal_points.extend(list(getEquidistantPoints((goal_pass_x[i], goal_pass_y[i]), (goal_shot_x[i], goal_shot_y[i]), 500)))
+
+print(len(all_goal_points))
+
 print(len(all_points))
 all_points = np.array(all_points)
 print(all_points)
@@ -117,6 +139,10 @@ all_x = all_points[:, 0]
 all_y = all_points[:, 1]
 print(all_x)
 
+all_goal_points = np.array(all_goal_points)
+all_goal_x = all_goal_points[:, 0]
+all_goal_y = all_goal_points[:, 1]
+
 df = pd.DataFrame({'x': all_x, 'y': all_y})
 
 cvs = ds.Canvas(plot_width=800, plot_height=600)
@@ -125,5 +151,15 @@ img = ds.tf.shade(agg, how='log', cmap=colorcet.fire)
 img = ds.tf.set_background(img, 'black')
 pil_img = img.to_pil()
 pil_img.save('media/heatmap_of_key_passes.png')
+pil_img.show()
+
+df = pd.DataFrame({'x': all_goal_x, 'y': all_goal_y})
+
+cvs = ds.Canvas(plot_width=800, plot_height=600)
+agg = cvs.points(df, 'x', 'y')
+img = ds.tf.shade(agg, how='log', cmap=colorcet.fire)
+img = ds.tf.set_background(img, 'black')
+pil_img = img.to_pil()
+pil_img.save('media/heatmap_of_key_passes_with_goal.png')
 pil_img.show()
 # %%
