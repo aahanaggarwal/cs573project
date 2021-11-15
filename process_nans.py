@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-shots = pd.read_csv("shots.csv")
+shots = pd.read_csv("shots.csv", index_col=0)
 # replace -1 with NaN for LOCF
 shots_LOCF = shots.replace(-1.0, np.nan)
 shots_LOCF = shots_LOCF.fillna(method="ffill")
