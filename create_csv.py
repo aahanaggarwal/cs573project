@@ -136,7 +136,7 @@ for shot in data:
     if 'key_pass_id' in shot['shot'] and shot['shot']['key_pass_id'] in key_pass_array:
         key_pass = key_pass_data[key_pass_array.index(shot['shot']['key_pass_id'])]
         pass_length.append(key_pass['pass']['length'])
-        pass_angle.append(key_pass['pass']['angle'])
+        pass_angle.append(abs(key_pass['pass']['angle']))
         start_pos = key_pass['location']
         end_pos = key_pass['pass']['end_location']
         pass_duration = key_pass['duration']
