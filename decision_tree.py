@@ -1,6 +1,6 @@
 from sklearn import tree
 from sklearn.model_selection import cross_val_score, train_test_split
-from sklearn import metrics
+from sklearn.metrics import classification_report, confusion_matrix
 from operator import itemgetter
 import pandas as pd
 import numpy as np
@@ -31,7 +31,7 @@ df_mean["shot_body_part"] = df_mean["shot_body_part"].cat.codes
 
 df = df.sample(frac=1, random_state=42) # shuffle dataset
 df_mean = df_mean.sample(frac=1, random_state=42) # shuffle dataset
-print(df.shape[0])
+# print(df.shape[0])
 features = df.columns.tolist()
 features.remove("goal")
 # original X and Y
@@ -57,8 +57,8 @@ for class_index, group in df_mean.groupby("goal"):
     sampled_m.append(group.sample(max_size-len(group), replace=True))
 
 df_mnew = pd.concat(sampled_m)
-print(df_new.shape[0])
-print(df_mnew.shape[0])
+# print(df_new.shape[0])
+# print(df_mnew.shape[0])
 
 # split into X and Y
 X_train = df_new[features]
@@ -90,28 +90,38 @@ for i in range(3, 6):
     depth.append((i, scores.mean()))
     depth_m.append((i, scores_m.mean()))
 
-print(depth)
-print(depth_m)
+# print(depth)
+# print(depth_m)
 m_depth = max(depth, key=itemgetter(1))[0] # get max depth from cross validation
 mm_depth = max(depth_m, key=itemgetter(1))[0]
-print(m_depth)
-print(mm_depth)
+# print(m_depth)
+# print(mm_depth)
 dt_shots = tree.DecisionTreeClassifier(max_depth=m_depth)
 dt_shots = dt_shots.fit(X_train, Y_train)
 
 dtm_shots = tree.DecisionTreeClassifier(max_depth=mm_depth)
 dtm_shots = dtm_shots.fit(Xm_train, Ym_train)
 
-dot_data = tree.export_graphviz(dt_shots, out_file=None, class_names=["0", "1"],feature_names=features, filled=True, rounded=True, special_characters=True)
-graph = graphviz.Source(dot_data)
-graph.render("shots_dt")
+# dot_data = tree.export_graphviz(dt_shots, out_file=None, class_names=["0", "1"],feature_names=features, filled=True, rounded=True, special_characters=True)
+# graph = graphviz.Source(dot_data)
+# graph.render("shots_dt")
 
-dotm_data = tree.export_graphviz(dtm_shots, out_file=None, class_names=["0", "1"], feature_names=features, filled=True, rounded=True, special_characters=True)
-graph_m = graphviz.Source(dotm_data)
-graph_m.render("shots_dtm")
+# dotm_data = tree.export_graphviz(dtm_shots, out_file=None, class_names=["0", "1"], feature_names=features, filled=True, rounded=True, special_characters=True)
+# graph_m = graphviz.Source(dotm_data)
+# graph_m.render("shots_dtm")
 
 y_pred = dt_shots.predict(X_orig)
-print("LOCF Accuracy:", metrics.accuracy_score(Y_orig, y_pred))
+y_pred_m = dtm_shots.predict(Xm_orig)
 
-ym_pred = dtm_shots.predict(Xm_orig)
-print("Mean Mode Accuracy:", metrics.accuracy_score(Ym_orig, ym_pred))
+print("LOCF Report")
+print(classification_report(Y_orig, y_pred))
+
+print("Mean Report")
+print(classification_report(Ym_orig, y_pred_m))
+
+print()
+print("LOCF Confusion Matrix")
+print(confusion_matrix(Y_orig, y_pred))
+
+print("Mean Confusion Matrix")
+print(confusion_matrix(Ym_orig, y_pred_m))

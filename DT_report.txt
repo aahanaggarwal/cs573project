@@ -1,0 +1,27 @@
+LOCF Report
+              precision    recall  f1-score   support
+
+           0       0.96      0.76      0.85     20910
+           1       0.29      0.77      0.42      2708
+
+    accuracy                           0.76     23618
+   macro avg       0.63      0.76      0.64     23618
+weighted avg       0.89      0.76      0.80     23618
+
+Mean Report
+              precision    recall  f1-score   support
+
+           0       0.96      0.75      0.85     20910
+           1       0.29      0.78      0.42      2708
+
+    accuracy                           0.76     23618
+   macro avg       0.63      0.77      0.63     23618
+weighted avg       0.89      0.76      0.80     23618
+
+
+LOCF Confusion Matrix
+[[15840  5070]
+ [  624  2084]]
+Mean Confusion Matrix
+[[15746  5164]
+ [  599  2109]]
