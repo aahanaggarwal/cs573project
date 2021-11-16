@@ -37,7 +37,7 @@ for feature in categorical_features:
 continous_features = df_locf.columns.difference(discrete_features)
 
 
-est = KBinsDiscretizer(n_bins=5, encode='ordinal', strategy='kmeans')
+est = KBinsDiscretizer(n_bins=5, encode='ordinal')
 for feature in continous_features:
     df_locf[feature] = est.fit_transform(df_locf[feature].values.reshape(-1, 1))
     df_mean[feature] = est.fit_transform(df_mean[feature].values.reshape(-1, 1))
