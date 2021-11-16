@@ -1,0 +1,51 @@
+Original
+LOCF
+              precision    recall  f1-score   support
+
+           0       0.90      0.97      0.93      4159
+           1       0.40      0.17      0.24       565
+
+    accuracy                           0.87      4724
+   macro avg       0.65      0.57      0.58      4724
+weighted avg       0.84      0.87      0.85      4724
+
+[[4016  143]
+ [ 470   95]]
+Mean
+              precision    recall  f1-score   support
+
+           0       0.90      0.96      0.93      4171
+           1       0.38      0.18      0.24       553
+
+    accuracy                           0.87      4724
+   macro avg       0.64      0.57      0.58      4724
+weighted avg       0.84      0.87      0.85      4724
+
+[[4015  156]
+ [ 456   97]]
+
+Oversampled
+LOCF
+              precision    recall  f1-score   support
+
+           0       0.95      0.67      0.79      4159
+           1       0.23      0.73      0.35       565
+
+    accuracy                           0.68      4724
+   macro avg       0.59      0.70      0.57      4724
+weighted avg       0.86      0.68      0.73      4724
+
+[[2793 1366]
+ [ 151  414]]
+Mean
+              precision    recall  f1-score   support
+
+           0       0.95      0.67      0.79      4171
+           1       0.22      0.71      0.34       553
+
+    accuracy                           0.68      4724
+   macro avg       0.59      0.69      0.56      4724
+weighted avg       0.86      0.68      0.73      4724
+
+[[2809 1362]
+ [ 160  393]]
