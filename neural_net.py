@@ -105,3 +105,23 @@ print(classification_report(y_locf, y_orig_locf_pred))
 print('Mean')
 print(classification_report(y_mean, y_orig_mean_pred))
 
+print()
+
+# print("Comparing Sums")
+# print("Original Dataset Number of Goals")
+# print("LOCF")
+# print(np.sum(y_locf))
+# print("Mean")
+# print(np.sum(y_mean))
+
+# print("Oversampling Probability Sums")
+# print("LOCF")
+# print(np.sum(y_locf_oversampled_prob, axis=0)[0])
+# print("Mean")
+# print(np.sum(y_mean_oversampled_prob, axis=0)[0])
+
+# print("Original Probability Sums")
+# print("LOCF")
+# print(np.sum(y_orig_locf_prob, axis=0)[0])
+# print("Mean")
+# print(np.sum(y_orig_mean_prob, axis=0)[0])

@@ -2,42 +2,42 @@ Oversampled
 LOCF
               precision    recall  f1-score   support
 
-           0       0.98      0.92      0.95     16701
-           1       0.92      0.98      0.95     16701
+           0       0.97      0.95      0.96     16729
+           1       0.95      0.97      0.96     16729
 
-    accuracy                           0.95     33402
-   macro avg       0.95      0.95      0.95     33402
-weighted avg       0.95      0.95      0.95     33402
+    accuracy                           0.96     33458
+   macro avg       0.96      0.96      0.96     33458
+weighted avg       0.96      0.96      0.96     33458
 
 Mean
               precision    recall  f1-score   support
 
-           0       0.98      0.93      0.96     16756
-           1       0.94      0.98      0.96     16756
+           0       0.98      0.95      0.97     16724
+           1       0.96      0.98      0.97     16724
 
-    accuracy                           0.96     33512
-   macro avg       0.96      0.96      0.96     33512
-weighted avg       0.96      0.96      0.96     33512
+    accuracy                           0.97     33448
+   macro avg       0.97      0.97      0.97     33448
+weighted avg       0.97      0.97      0.97     33448
 
 
 Original
 LOCF
               precision    recall  f1-score   support
 
-           0       0.95      0.99      0.97     16701
-           1       0.88      0.60      0.71      2193
+           0       0.97      0.96      0.96     16729
+           1       0.70      0.74      0.72      2165
 
-    accuracy                           0.94     18894
-   macro avg       0.91      0.79      0.84     18894
-weighted avg       0.94      0.94      0.94     18894
+    accuracy                           0.93     18894
+   macro avg       0.83      0.85      0.84     18894
+weighted avg       0.94      0.93      0.93     18894
 
 Mean
               precision    recall  f1-score   support
 
-           0       0.95      0.98      0.96     16756
-           1       0.80      0.59      0.68      2138
+           0       0.95      0.98      0.97     16724
+           1       0.82      0.62      0.71      2170
 
     accuracy                           0.94     18894
-   macro avg       0.87      0.78      0.82     18894
-weighted avg       0.93      0.94      0.93     18894
+   macro avg       0.89      0.80      0.84     18894
+weighted avg       0.94      0.94      0.94     18894
 
