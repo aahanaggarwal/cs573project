@@ -155,14 +155,20 @@ print("Mean")
 print(np.sum(y_orig_mean_prob, axis=0)[0])
 
 #%%
-ycum_orig_locf = np.cumsum(y_orig_locf_prob, axis=0)[:, 1]
-ycum_orig_mean = np.cumsum(y_orig_mean_prob, axis=0)[:, 1]
 
-ycum_oversampled_locf = np.cumsum(y_locf_oversampled_prob, axis=0)[:, 1]
-ycum_oversampled_mean = np.cumsum(y_mean_oversampled_prob, axis=0)[:, 1]
+ycum_orig_locf = np.add.reduceat(y_orig_locf_prob[:, 1], np.arange(0, len(y_orig_locf_prob[:, 1]), 1000))
+ycum_orig_mean = np.add.reduceat(y_orig_mean_prob[:, 1], np.arange(0, len(y_orig_mean_prob[:, 1]), 1000))
 
-ycum_og_locf = np.cumsum(y_locf, axis=0)
-ycum_og_mean = np.cumsum(y_mean, axis=0)
+ycum_oversampled_locf = np.add.reduceat(y_locf_oversampled_prob[:, 1], np.arange(0, len(y_locf_oversampled_prob[:, 1]), 1000))
+ycum_oversampled_mean = np.add.reduceat(y_mean_oversampled_prob[:, 1], np.arange(0, len(y_mean_oversampled_prob[:, 1]), 1000))
+
+ycum_og_mean = np.add.reduceat(np.array(y_mean), np.arange(0, 23618, 1000))
+
+# print(ycum_orig_locf)
+# print(ycum_orig_mean)
+# print(ycum_oversampled_locf)
+# print(ycum_oversampled_mean)
+print(ycum_og_mean)
 
 #%%
 
@@ -188,21 +194,30 @@ import matplotlib.pyplot as plt
 # ycum_og_locf = ycum_og_locf / np.arange(5, len(ycum_og_locf) + 5)
 # ycum_og_mean = ycum_og_mean / np.arange(5, len(ycum_og_mean) + 5)
 
+from scipy.interpolate import BSpline, make_interp_spline
+
+spl = make_interp_spline(np.arange(0, len(ycum_orig_locf)), ycum_orig_locf, k = 3)
+ycum_orig_locf_smooth = spl(ycum_orig_locf)
+
+spl = make_interp_spline(np.arange(0, len(ycum_orig_mean)), ycum_orig_mean, k=3)
+ycum_orig_mean_smooth = spl(ycum_orig_mean)
+
+spl = make_interp_spline(np.arange(0, len(ycum_og_mean)), ycum_og_mean, k=3)
+ycum_og_mean_smooth = spl(ycum_og_mean)
 
 plt.figure(figsize=(10, 10))
-plt.plot(ycum_orig_locf, label='Original Data LOCF Prob')
-plt.plot(ycum_orig_mean, label='Original Data Mean Prob')
+plt.plot(ycum_orig_locf_smooth, label='Original Data LOCF Prob')
+plt.plot(ycum_orig_mean_smooth, label='Original Data Mean Prob')
 
-plt.plot(ycum_oversampled_locf, label='Oversampled Data LOCF Prob')
-plt.plot(ycum_oversampled_mean, label='Oversampled Data Mean Prob')
+# plt.plot(ycum_oversampled_locf, label='Oversampled Data LOCF Prob')
+# plt.plot(ycum_oversampled_mean, label='Oversampled Data Mean Prob')
 
-plt.plot(ycum_og_locf, label='LCOF Goal Sums')
-plt.plot(ycum_og_mean, label='Mean Goal Sums')
+plt.plot(ycum_og_mean_smooth, label='Actual Goal Sums')
 
-plt.xlim(30, 25000)
-# plt.ylim(1, 2)
+# plt.xlim(0, 220)
+# plt.ylim(0, 20)
 plt.legend()
-plt.xlabel('Shot Number')
-plt.ylabel('Cumulative Goals per shot')
-plt.savefig('media/cumulative_goals_comp_nn.png')
+plt.xlabel('100\'s of Games')
+plt.ylabel('Smoothed Goals per 100 games')
+plt.savefig('media/understat_graph_comp.png')
 plt.show()
