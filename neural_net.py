@@ -1,3 +1,5 @@
+#%%
+
 from os import replace
 from sklearn import neural_network
 from sklearn.metrics import classification_report, confusion_matrix
@@ -107,21 +109,100 @@ print(classification_report(y_mean, y_orig_mean_pred))
 
 print()
 
-# print("Comparing Sums")
-# print("Original Dataset Number of Goals")
-# print("LOCF")
-# print(np.sum(y_locf))
-# print("Mean")
-# print(np.sum(y_mean))
+#%%
 
-# print("Oversampling Probability Sums")
-# print("LOCF")
-# print(np.sum(y_locf_oversampled_prob, axis=0)[0])
-# print("Mean")
-# print(np.sum(y_mean_oversampled_prob, axis=0)[0])
+df_locf_og = pd.read_csv('shots_LOCF.csv', index_col='shot_num')
+# read mean mode data
+df_mean_og = pd.read_csv('shots_mean.csv', index_col='shot_num')
 
-# print("Original Probability Sums")
-# print("LOCF")
-# print(np.sum(y_orig_locf_prob, axis=0)[0])
-# print("Mean")
-# print(np.sum(y_orig_mean_prob, axis=0)[0])
+for feature in categorical_features:
+    df_locf_og[feature] = pd.Categorical(df_locf_og[feature])
+    df_mean_og[feature] = pd.Categorical(df_mean_og[feature])
+    df_locf_og[feature] = df_locf_og[feature].cat.codes
+    df_mean_og[feature] = df_mean_og[feature].cat.codes
+
+X_locf = df_locf_og[all_features]
+y_locf = df_locf_og['goal']
+
+X_mean = df_mean_og[all_features]
+y_mean = df_mean_og['goal']
+
+
+y_orig_locf_prob = nn_locf.predict_proba(X_locf)
+y_orig_mean_prob = nn_mean.predict_proba(X_mean)
+
+
+y_locf_oversampled_prob = nn_locf_oversampled.predict_proba(X_locf)
+y_mean_oversampled_prob = nn_mean_oversampled.predict_proba(X_locf)
+
+print("Comparing Sums")
+print("Original Dataset Number of Goals")
+print("LOCF")
+print(np.sum(y_locf))
+print("Mean")
+print(np.sum(y_mean))
+
+print("Oversampling Probability Sums")
+print("LOCF")
+print(np.sum(y_locf_oversampled_prob, axis=0)[0])
+print("Mean")
+print(np.sum(y_mean_oversampled_prob, axis=0)[0])
+
+print("Original Probability Sums")
+print("LOCF")
+print(np.sum(y_orig_locf_prob, axis=0)[0])
+print("Mean")
+print(np.sum(y_orig_mean_prob, axis=0)[0])
+
+#%%
+ycum_orig_locf = np.cumsum(y_orig_locf_prob, axis=0)[:, 1]
+ycum_orig_mean = np.cumsum(y_orig_mean_prob, axis=0)[:, 1]
+
+ycum_oversampled_locf = np.cumsum(y_locf_oversampled_prob, axis=0)[:, 1]
+ycum_oversampled_mean = np.cumsum(y_mean_oversampled_prob, axis=0)[:, 1]
+
+ycum_og_locf = np.cumsum(y_locf, axis=0)
+ycum_og_mean = np.cumsum(y_mean, axis=0)
+
+#%%
+
+import matplotlib.pyplot as plt
+
+# convert to log plot
+# ycum_orig_locf = np.log(ycum_orig_locf)
+# ycum_orig_mean = np.log(ycum_orig_mean)
+
+# ycum_oversampled_locf = np.log(ycum_oversampled_locf)
+# ycum_oversampled_mean = np.log(ycum_oversampled_mean)
+
+# ycum_og_locf = np.log(ycum_og_locf)
+# ycum_og_mean = np.log(ycum_og_mean)
+
+# divide by shot num
+# ycum_orig_locf = ycum_orig_locf / np.arange(5, len(ycum_orig_locf) + 5)
+# ycum_orig_mean = ycum_orig_mean / np.arange(5, len(ycum_orig_mean) + 5)
+
+# ycum_oversampled_locf = ycum_oversampled_locf / np.arange(5, len(ycum_oversampled_locf) + 5)
+# ycum_oversampled_mean = ycum_oversampled_mean / np.arange(5, len(ycum_oversampled_mean) + 5)
+
+# ycum_og_locf = ycum_og_locf / np.arange(5, len(ycum_og_locf) + 5)
+# ycum_og_mean = ycum_og_mean / np.arange(5, len(ycum_og_mean) + 5)
+
+
+plt.figure(figsize=(10, 10))
+plt.plot(ycum_orig_locf, label='Original Data LOCF Prob')
+plt.plot(ycum_orig_mean, label='Original Data Mean Prob')
+
+plt.plot(ycum_oversampled_locf, label='Oversampled Data LOCF Prob')
+plt.plot(ycum_oversampled_mean, label='Oversampled Data Mean Prob')
+
+plt.plot(ycum_og_locf, label='LCOF Goal Sums')
+plt.plot(ycum_og_mean, label='Mean Goal Sums')
+
+plt.xlim(30, 25000)
+# plt.ylim(1, 2)
+plt.legend()
+plt.xlabel('Shot Number')
+plt.ylabel('Cumulative Goals per shot')
+plt.savefig('media/cumulative_goals_comp_nn.png')
+plt.show()
