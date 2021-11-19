@@ -205,7 +205,7 @@ ycum_orig_mean_smooth = spl(ycum_orig_mean)
 spl = make_interp_spline(np.arange(0, len(ycum_og_mean)), ycum_og_mean, k=3)
 ycum_og_mean_smooth = spl(ycum_og_mean)
 
-plt.figure(figsize=(10, 10))
+plt.figure(figsize=(20, 10))
 plt.plot(ycum_orig_locf_smooth, label='Original Data LOCF Prob')
 plt.plot(ycum_orig_mean_smooth, label='Original Data Mean Prob')
 
