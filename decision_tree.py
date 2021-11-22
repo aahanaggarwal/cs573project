@@ -8,7 +8,7 @@ import graphviz
 import matplotlib.pyplot as plt
 
 # get data for LOCF and mean preprocessed
-df = pd.read_csv("shots_LOCF.csv", index_col="shot_num")
+df = pd.read_csv("data/shots_LOCF.csv", index_col="shot_num")
 # turn categorical into numerical
 df["play_pattern"] = pd.Categorical(df["play_pattern"])
 df["play_pattern"] = df["play_pattern"].cat.codes
@@ -19,7 +19,7 @@ df["shot_technique"] = df["shot_technique"].cat.codes
 df["shot_body_part"] = pd.Categorical(df["shot_body_part"])
 df["shot_body_part"] = df["shot_body_part"].cat.codes
 
-df_mean = pd.read_csv("shots_mean.csv", index_col="shot_num")
+df_mean = pd.read_csv("data/shots_mean.csv", index_col="shot_num")
 df_mean["play_pattern"] = pd.Categorical(df_mean["play_pattern"])
 df_mean["play_pattern"] = df_mean["play_pattern"].cat.codes
 df_mean["shot_taker_type"] = pd.Categorical(df_mean["shot_taker_type"])

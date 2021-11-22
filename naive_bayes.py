@@ -1,16 +1,16 @@
 from os import replace
 from sklearn import naive_bayes
 from sklearn.metrics import classification_report, confusion_matrix
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.model_selection import train_test_split, cross_val_score, learning_curve
 from sklearn.preprocessing import KBinsDiscretizer
 import pandas as pd
 import numpy as np
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 # read locf data
-df_locf = pd.read_csv('shots_LOCF.csv', index_col='shot_num')
+df_locf = pd.read_csv('data/shots_LOCF.csv', index_col='shot_num')
 # read mean mode data
-df_mean = pd.read_csv('shots_mean.csv', index_col='shot_num')
+df_mean = pd.read_csv('data/shots_mean.csv', index_col='shot_num')
 
 discrete_features = [
     'play_pattern',
@@ -187,3 +187,80 @@ print("LOCF")
 print(np.sum(y_orig_prob_locf, axis=0)[0])
 print("Mean")
 print(np.sum(y_orig_prob_mean, axis=0)[0])
+
+# Plots
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 5))
+ax1.set_title("Performance of LOCF-NBC vs. # Training Examples")
+ax2.set_title("Performance of MEAN-NBC vs. # Training Examples")
+ax1.set_xlabel("Training Examples")
+ax2.set_xlabel("Training Examples")
+ax1.set_ylabel("Accuracy")
+ax2.set_ylabel("Accuracy")
+
+LOCF_train_sizes, LOCF_train_scores, LOCF_test_scores = learning_curve(
+    nbc_locf,
+    X_locf,
+    y_locf,
+    n_jobs=2,
+)
+
+LOCF_train_score_mean = np.mean(LOCF_train_scores, axis=1)
+LOCF_train_score_std = np.std(LOCF_train_scores, axis=1)
+LOCF_test_score_mean = np.mean(LOCF_test_scores, axis=1)
+LOCF_test_score_std = np.std(LOCF_test_scores, axis=1)
+
+MEAN_train_sizes, MEAN_train_scores, MEAN_test_scores = learning_curve(
+    nbc_mean,
+    X_mean,
+    y_mean,
+    n_jobs=2,
+)
+
+MEAN_train_score_mean = np.mean(MEAN_train_scores, axis=1)
+MEAN_train_score_std = np.std(MEAN_train_scores, axis=1)
+MEAN_test_score_mean = np.mean(MEAN_test_scores, axis=1)
+MEAN_test_score_std = np.std(MEAN_test_scores, axis=1)
+
+ax1.grid()
+ax1.fill_between(
+    LOCF_train_sizes,
+    LOCF_train_score_mean - LOCF_train_score_std,
+    LOCF_train_score_mean + LOCF_train_score_std,
+    alpha=0.1,
+    color="r",
+)
+ax1.fill_between(
+    LOCF_train_sizes,
+    LOCF_test_score_mean - LOCF_test_score_std,
+    LOCF_test_score_mean + LOCF_test_score_std,
+    alpha=0.1,
+    color="b",
+)
+
+ax1.plot(LOCF_train_sizes, LOCF_train_score_mean, "o-", color="r", label="Training score")
+ax1.plot(LOCF_train_sizes, LOCF_test_score_mean, "o-", color="b", label="Testing score")
+
+ax1.legend(loc="best")
+
+ax2.grid()
+ax2.fill_between(
+    MEAN_train_sizes,
+    MEAN_train_score_mean - MEAN_train_score_std,
+    MEAN_train_score_mean + MEAN_train_score_std,
+    alpha=0.1,
+    color="r",
+)
+ax2.fill_between(
+    MEAN_train_sizes,
+    MEAN_test_score_mean - MEAN_test_score_std,
+    MEAN_test_score_mean + MEAN_test_score_std,
+    alpha=0.1,
+    color="b",
+)
+
+ax2.plot(MEAN_train_sizes, MEAN_train_score_mean, "o-", color="r", label="Training score")
+ax2.plot(MEAN_train_sizes, MEAN_test_score_mean, "o-", color="b", label="Testing score")
+
+ax2.legend(loc="best")
+
+plt.show()
