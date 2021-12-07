@@ -10,9 +10,9 @@ import numpy as np
 # import matplotlib.pyplot as plt
 
 # read locf data
-df_locf = pd.read_csv('shots_LOCF.csv', index_col='shot_num')
+df_locf = pd.read_csv('data/shots_LOCF.csv', index_col='shot_num')
 # read mean mode data
-df_mean = pd.read_csv('shots_mean.csv', index_col='shot_num')
+df_mean = pd.read_csv('data/shots_mean.csv', index_col='shot_num')
 
 categorical_features = [
     'play_pattern',
@@ -94,8 +94,8 @@ nn_locf.fit(X_locf, y_locf)
 nn_mean = neural_network.MLPClassifier(hidden_layer_sizes=(128, 64, 32))
 nn_mean.fit(X_mean, y_mean)
 
-y_orig_locf_pred = nn_locf.predict(X_locf)
-y_orig_mean_pred = nn_mean.predict(X_mean)
+y_orig_locf_pred = nn_locf.predict(X_locf_test)
+y_orig_mean_pred = nn_mean.predict(X_mean_test)
 
 y_orig_locf_prob = nn_locf.predict_proba(X_locf)
 y_orig_mean_prob = nn_mean.predict_proba(X_mean)
@@ -103,9 +103,9 @@ y_orig_mean_prob = nn_mean.predict_proba(X_mean)
 # print classification report
 print('Original')
 print('LOCF')
-print(classification_report(y_locf, y_orig_locf_pred))
+print(classification_report(y_locf_test, y_orig_locf_pred))
 print('Mean')
-print(classification_report(y_mean, y_orig_mean_pred))
+print(classification_report(y_mean_test, y_orig_mean_pred))
 
 print()
 
